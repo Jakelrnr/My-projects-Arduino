@@ -1,0 +1,50 @@
+
+// this code is in theformat of c++
+int distance = 0;
+
+long readUltrasonicDistance(int triggerPin, int echoPin)       // this reads the data onthe ultra sonic sensor 
+{
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigger pin to HIGH state for 10 microseconds
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  // Reads the echo pin,  and returns how long it takes to recieve the sound back
+  return pulseIn(echoPin, HIGH);
+}
+
+void setup()
+{
+  pinMode(13, OUTPUT);       // this sets the led as an output
+  pinMode(12, OUTPUT);
+  pinMode(11, OUTPUT);
+
+  
+  
+}
+
+void loop()
+{
+  distance = 0.01723 * readUltrasonicDistance(1, 2); // this sets the distance to cm
+  
+  if (distance < 10) {
+    digitalWrite(13, HIGH);                //this sets the threshold for the distance to trigger the LEDs 
+    delay (200);
+    digitalWrite(13,LOW);
+  }
+  if ((distance > 10) and (distance < 20)) {
+    digitalWrite(12, HIGH);
+    delay (200);
+    digitalWrite(12,LOW);
+  }
+
+  if (distance > 20) {
+    digitalWrite(11, HIGH);
+    delay (200);
+    digitalWrite(11,LOW);
+  }
+  delay(10); // Delay a little bit to improve how the code runs
+}
