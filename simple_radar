@@ -1,0 +1,66 @@
+#include <Servo.h>
+
+Servo myservo;  // create Servo object to control a servo
+// twelve Servo objects can be created on most boards
+int triggerPin=(1);
+
+int echoPin = (2);
+int pos = 0;    // variable to store the servo position
+  long readUltrasonicDistance(int triggerPin, int echoPin)
+{
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigger pin to HIGH state for 10 microseconds
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  // Reads the echo pin, and returns the sound wave travel time in microseconds
+  return pulseIn(echoPin, HIGH);}
+  int distance = (readUltrasonicDistance);
+void setup() {
+  myservo.attach(9);  // attaches the servo on pin 9 to the Servo object
+  long readUltrasonicDistance(int triggerPin, int echoPin);
+ 
+}
+
+void loop() {
+
+
+ 
+  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15 ms for the servo to reach the position
+  }
+  if (readUltrasonicDistance>=20){
+    digitalWrite(6,LOW);
+    digitalWrite(7,LOW);
+    digitalWrite(8,LOW);
+    digitalWrite(6,HIGH);
+    delay(9);
+    digitalWrite(6,LOW);
+  }
+  if (readUltrasonicDistance<=10){
+    digitalWrite(6,LOW);
+    digitalWrite(7,LOW);
+    digitalWrite(8,LOW);
+    digitalWrite(7,HIGH);
+    delay(9);
+    digitalWrite(7,LOW);
+
+  }if (readUltrasonicDistance<=5){
+    digitalWrite(6,LOW);
+    digitalWrite(7,LOW);
+    digitalWrite(8,LOW);
+    digitalWrite(8,HIGH);
+    delay(9);
+    digitalWrite(8,LOW);
+
+  }
+}
