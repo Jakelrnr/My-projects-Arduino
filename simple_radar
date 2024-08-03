@@ -38,7 +38,7 @@ void loop() {
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15 ms for the servo to reach the position
   }
-  if (readUltrasonicDistance>=20){
+  if (readUltrasonicDistance>=20)and (readUltrasonicDistance<30){
     digitalWrite(6,LOW);
     digitalWrite(7,LOW);
     digitalWrite(8,LOW);
@@ -46,7 +46,7 @@ void loop() {
     delay(9);
     digitalWrite(6,LOW);
   }
-  if (readUltrasonicDistance<=10){
+  if (readUltrasonicDistance<=10)and (readUltrasonicDistance < 5 ){
     digitalWrite(6,LOW);
     digitalWrite(7,LOW);
     digitalWrite(8,LOW);
