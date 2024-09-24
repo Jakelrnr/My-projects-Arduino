@@ -1,4 +1,12 @@
-proof of concept : #include Servo servo_1; Servo servo_2; Servo servo_3; Servo servo_4; Servo servo_5; Servo servo_6; void setup() {// this is a servo test before animating the machine servo_1.attach(1, 500, 2500); servo_2.attach(2, 500, 2500); servo_3.attach(3, 500, 2500); servo_4.attach(4, 500, 2500); servo_5.attach(5, 500, 2500); servo_6.attach(6, 500, 2500); servo_1.write(0);
+//proof of concept :
+#include <Servo.h>
+servo_1;
+ servo_2; 
+Servo servo_3; 
+Servo servo_4;
+Servo servo_5; 
+Servo servo_6; 
+void setup() {// this is a servo test before animating the machine servo_1.attach(1, 500, 2500); servo_2.attach(2, 500, 2500); servo_3.attach(3, 500, 2500); servo_4.attach(4, 500, 2500); servo_5.attach(5, 500, 2500); servo_6.attach(6, 500, 2500); servo_1.write(0);
  servo_2.write(0); 
 servo_3.write(0); 
 servo_4.write(0); 
@@ -12,7 +20,6 @@ servo_3.write(90);
  servo_5.write(90); 
 servo_6.write(90);
  delay(1000); 
-
  servo_1.write(0); 
 servo_2.write(0);
  servo_3.write(0); 
