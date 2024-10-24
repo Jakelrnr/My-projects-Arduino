@@ -5,42 +5,86 @@ Servo servo_2;
 Servo servo_3;
 Servo servo_4;
 Servo servo_5;
-Servo servo_6;  
+Servo servo_6;  // Servo for wrist (connected to pin 6)
 
-int joyX = A0;        // Joystick X-axis connected to A0
-int joyY = A1;        // Joystick Y-axis connected to A1
-int joyButton = 7;    // Joystick button connected to digital pin 7
+int joyX = A0;    // Joystick X-axis connected to A0
+int joyY = A1;    // Joystick Y-axis connected to A1
+int joyButton = 7;  // Joystick button connected to digital pin 7
 
 int servo6_pos = 90;  // Initial position of wrist servo (servo_6)
-int deadzone = 100;   // Deadzone for joystick to prevent unintentional movement
+int deadzone = 100;   // Deadzone for joystick to prevent accidental movement
 
-bool is_open = false;  // Keep track of whether the arm is open or closed
-unsigned long lastMoveTime = 0;  // Track time for joystick actions
-unsigned long delayBetweenMoves = 200;  // Delay between moves for debounce (200ms)
-
-// Function to open all servos
-void open() {
+void close() {
   servo_1.write(0);
   servo_2.write(0);
   servo_3.write(0);
   servo_4.write(0);
   servo_5.write(0);
-  servo_6.write(90); 
-  is_open = true;     // Mark that the arm is open
+  servo_6.write(90);  // Keep wrist (servo 6) at 90° when opening
+  delay(1000);  // Wait for 1000 millisecond(s)
 }
 
-// Function to close all servos
-void close() {
+void open() {
   servo_1.write(90);
   servo_2.write(90);
   servo_3.write(90);
   servo_4.write(90);
   servo_5.write(90);
-  servo_6.write(90);  // Set wrist (servo 6) to centered position
-  is_open = false;    // Mark that the arm is closed
+  servo_6.write(90);  // Close wrist (servo 6)
+  delay(1000);  // Wait for 1000 millisecond(s)
 }
 
-// Function to open only servo 2, 4, and 5
+// Gradual Open
+void grad_open() {
+  servo_1.write(0);
+  servo_2.write(0);
+  servo_3.write(0);
+  servo_4.write(0);
+  servo_5.write(90);
+  servo_6.write(90);
+  delay(1000);
+  
+  servo_4.write(90);
+  delay(1000);
+  
+  servo_3.write(90);
+  delay(1000);
+  
+  servo_2.write(90);
+  delay(1000);
+  
+  servo_1.write(90);
+  delay(1000);
+}
+
+// Gradual close
+void grad_close() {
+  delay(1000);
+  servo_1.write(90);
+  servo_2.write(90);
+  servo_3.write(90);
+  servo_4.write(90);
+  servo_5.write(90);
+  servo_6.write(90);
+  delay(1000);
+  
+  servo_5.write(0);
+  delay(1000);
+  
+  servo_4.write(0);
+  delay(1000);
+  
+  servo_3.write(0);
+  delay(1000);
+  
+  servo_2.write(0);
+  delay(1000);
+  
+  servo_1.write(0);
+  delay(1000);
+}
+
+//funny secret when joysick button is pressed
 void open_servo2_4_5() {
   servo_2.write(0);  // Open servo 2
   servo_4.write(0);  // Open servo 4
@@ -48,44 +92,42 @@ void open_servo2_4_5() {
 }
 
 void setup() {
-  // Attach servos to pins
+  // Set servo to pins
   servo_1.attach(1, 500, 2500);
   servo_2.attach(2, 500, 2500);
   servo_3.attach(3, 500, 2500);
   servo_4.attach(4, 500, 2500);
   servo_5.attach(5, 500, 2500);
-  servo_6.attach(6, 500, 2500);  
+  servo_6.attach(6, 500, 2500);  // Servo 6 (wrist) on pin 6
 
   // Joystick button pin setup
-  pinMode(joyButton, INPUT_PULLUP);  // Use pull-up resistor on joystick button
+  pinMode(joyButton, INPUT_PULLUP);  // Configure joystick button pin with internal pull-up resistor
 
-  // Initialize servos to 90° (neutral position)
+  // Servo test
   servo_1.write(90);
   servo_2.write(90);
   servo_3.write(90);
   servo_4.write(90);
   servo_5.write(90);
-  servo_6.write(90);  // Set wrist servo to neutral (90°)
+  servo_6.write(90);  // Set wrist servo to 90°
 
-  delay(1000);  // Allow time for initialization
+  grad_close();
+  delay(1000);
+  grad_open();
 }
 
 void loop() {
-  int xValue = analogRead(joyX);  // Read X-axis value from joystick
-  int yValue = analogRead(joyY);  // Read Y-axis value from joystick
-  int buttonState = digitalRead(joyButton);  // Read the joystick button state
-
-  unsigned long currentTime = millis();  // Current time for non-blocking delays
+  int xValue = analogRead(joyX);  // Read X-axis value
+  int yValue = analogRead(joyY);  // Read Y-axis value
+  int buttonState = digitalRead(joyButton);  // Read the state of the joystick button (LOW when pressed)
 
   // Handle up/down movement for open/close using Y-axis
-  if (currentTime - lastMoveTime > delayBetweenMoves) {  // Check if enough time has passed
-    if (yValue > 512 + deadzone && !is_open) {
-      close();  // Joystick pushed up, call close() if arm is open
-      lastMoveTime = currentTime;
-    } else if (yValue < 512 - deadzone && is_open) {
-      open();  // Joystick pulled down, call open() if arm is closed
-      lastMoveTime = currentTime;
-    }
+  if (yValue > 512 + deadzone) {
+    close();  // Joystick pushed up, close
+    delay(1000);  // Add delay to debounce
+  } else if (yValue < 512 - deadzone) {
+    open();  // Joystick pulled down, open
+    delay(1000);  // Add delay to debounce
   }
 
   // Handle left/right movement for wrist (servo_6) using X-axis
@@ -98,6 +140,8 @@ void loop() {
   // If the joystick button is pressed, open only servo 2, 4, and 5
   if (buttonState == LOW) {  // Button is pressed (LOW)
     open_servo2_4_5();
-    delay(500);  // Small delay
+    delay(1000);  // Debounce delay to avoid rapid triggering
   }
+
+  delay(10);  // Delay a little bit to improve simulation performance
 }
